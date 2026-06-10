@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111318">
+<title>Registo de Clientes</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#111318;--c1:#181c28;--c2:#1e2336;
+  --b1:rgba(255,255,255,0.08);--b2:rgba(255,255,255,0.16);
+  --t1:#eef0f8;--t2:#8c92ab;--t3:#4a5068;
+  --blue:#4f8ef7;--bbg:rgba(79,142,247,0.13);--bbd:rgba(79,142,247,0.38);
+  --green:#22c55e;--gbg:rgba(34,197,94,0.12);--gbd:rgba(34,197,94,0.32);
+  --red:#ef4444;--rbg:rgba(239,68,68,0.12);--rbd:rgba(239,68,68,0.38);
+  --r:14px;--rs:10px;
+}
+html,body{background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100dvh}
+.wrap{max-width:480px;margin:0 auto;padding:0 0 80px}
+.hdr{display:flex;align-items:center;gap:12px;padding:52px 20px 16px;border-bottom:1px solid var(--b1)}
+.logo{width:40px;height:40px;border-radius:12px;background:#1d4ed8;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.hdr p{font-size:13px;color:var(--t2);margin-top:2px}
+.tabs{display:flex;background:var(--c1);border-bottom:1px solid var(--b1)}
+.tab{flex:1;padding:13px 8px;font-size:13px;font-weight:600;color:var(--t3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:inherit}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.pane{display:none;padding:20px;animation:fi .2s ease}
+.pane.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.dict-area{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.dict-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+textarea.dict{width:100%;background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);color:var(--t1);font-family:inherit;font-size:15px;padding:12px;min-height:110px;resize:none;outline:none;line-height:1.6}
+textarea.dict:focus{border-color:var(--bbd)}
+.tip{font-size:13px;color:var(--t3);margin-top:10px;line-height:1.5}
+.btn{width:100%;padding:14px;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;margin-bottom:10px;transition:opacity .1s,transform .08s}
+.btn:active{opacity:.8;transform:scale(.97)}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.btn-blue{background:#1d4ed8;color:#fff}
+.btn-green{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.btn-out{background:var(--c2);color:var(--t1);border:1px solid var(--b2)}
+.btn-red{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.btn-sm{padding:11px;font-size:14px}
+.fl{margin-bottom:12px}
+.fl label{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.req{color:var(--red)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.ic{position:relative}
+.ic svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;pointer-events:none}
+.ic.tall svg{top:12px;transform:none}
+input,textarea.f{width:100%;background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);color:var(--t1);font-family:inherit;font-size:15px;padding:11px 11px 11px 34px;outline:none;-webkit-appearance:none;transition:border-color .15s}
+input:focus,textarea.f:focus{border-color:var(--bbd)}
+input.ai{border-color:var(--bbd);background:var(--bbg)}
+input.err{border-color:var(--rbd)!important;background:var(--rbg)!important}
+.err-msg{font-size:11px;color:var(--red);margin-top:3px;display:none}
+.err-msg.on{display:block}
+textarea.f{resize:none;min-height:68px;padding-top:11px;line-height:1.5}
+hr{border:none;border-top:1px solid var(--b1);margin:16px 0}
+.preview{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.preview-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.pr{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--b1);font-size:13px}
+.pr:last-child{border-bottom:none}
+.pr span:first-child{color:var(--t3);min-width:80px;flex-shrink:0}
+.saved-hint{font-size:12px;color:var(--t3);margin-top:-6px;margin-bottom:12px;padding-left:2px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--c2);border:1px solid var(--b2);border-radius:40px;padding:10px 22px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:90vw;text-align:center;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--gbd);color:var(--green);background:var(--gbg)}
+.toast.err{border-color:var(--rbd);color:var(--red);background:var(--rbg)}
+.toast.info{border-color:var(--bbd);color:var(--blue);background:var(--bbg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;animation:spin .7s linear infinite}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hdr">
+  <div class="logo">👤</div>
+  <div><h1>Registo de Clientes</h1><p>Preenche · Valida · Envia por email</p></div>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="goTab(0)">1 · Dados</button>
+  <button class="tab" onclick="goTab(1)">2 · Resumo</button>
+  <button class="tab" onclick="goTab(2)">3 · Enviar</button>
+</div>
+
+<!-- TAB 1 -->
+<div class="pane on" id="p0">
+  <div class="dict-area">
+    <div class="dict-label">🎙️ Ditar dados do cliente</div>
+    <textarea class="dict" id="dictado" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+      placeholder="Dita ou escreve os dados do cliente aqui.&#10;&#10;Ex: João Silva, telefone 923456789, email joao@empresa.com, empresa ABC Lda, cidade Luanda, procura seguro automóvel"></textarea>
+    <div class="tip">💡 No telemóvel: toca aqui → 🎤 do teclado → dita → toca "Extrair com IA".</div>
+  </div>
+  <button class="btn btn-blue" id="btnEx" onclick="extrairComIA()">✨ Extrair dados com IA</button>
+  <hr>
+  <div class="r2">
+    <div class="fl">
+      <label>Nome <span class="req">*</span></label>
+      <div class="ic">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input id="f_nom" type="text" placeholder="Nome" autocomplete="new-password" autocorrect="off" autocapitalize="words" spellcheck="false" oninput="limparErr('f_nom','e_nom')">
+      </div>
+      <div class="err-msg" id="e_nom">⚠ Nome obrigatório</div>
+    </div>
+    <div class="fl">
+      <label>Apelido <span class="req">*</span></label>
+      <div class="ic">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input id="f_ape" type="text" placeholder="Apelido" autocomplete="new-password" autocorrect="off" autocapitalize="words" spellcheck="false" oninput="limparErr('f_ape','e_ape')">
+      </div>
+      <div class="err-msg" id="e_ape">⚠ Apelido obrigatório</div>
+    </div>
+  </div>
+  <div class="fl">
+    <label>Telefone <span class="req">*</span> — só números</label>
+    <div class="ic">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.39 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6.06 6.06l1.62-1.62a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <input id="f_tel" type="tel" placeholder="923456789" inputmode="numeric"
+        autocomplete="new-password" spellcheck="false"
+        onkeydown="if(event.key.length===1&&!/[0-9]/.test(event.key))event.preventDefault()"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');limparErr('f_tel','e_tel')"
+        onpaste="var s=this;setTimeout(function(){s.value=s.value.replace(/[^0-9]/g,'')},0)"
+        onblur="this.value=this.value.replace(/[^0-9]/g,'')">
+    </div>
+    <div class="err-msg" id="e_tel">⚠ Telefone obrigatório — só números, mínimo 6 dígitos</div>
+  </div>
+  <div class="fl">
+    <label>Email</label>
+    <div class="ic">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <input id="f_email" type="email" placeholder="cliente@email.com" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="limparErr('f_email','e_email')">
+    </div>
+    <div class="err-msg" id="e_email">⚠ Formato de email inválido</div>
+  </div>
+  <div class="r2">
+    <div class="fl">
+      <label>Empresa</label>
+      <div class="ic">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        <input id="f_emp" type="text" placeholder="Empresa" autocomplete="new-password" autocorrect="off" spellcheck="false">
+      </div>
+    </div>
+    <div class="fl">
+      <label>Cidade</label>
+      <div class="ic">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <input id="f_ciu" type="text" placeholder="Cidade" autocomplete="new-password" autocorrect="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
+  <div class="fl">
+    <label>Procura / Interesse</label>
+    <div class="ic">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <input id="f_prod" type="text" placeholder="O que procura?" autocomplete="new-password" autocorrect="off" spellcheck="false">
+    </div>
+  </div>
+  <div class="fl">
+    <label>Notas</label>
+    <div class="ic tall">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      <textarea class="f" id="f_notas" placeholder="Outras observações..." autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+    </div>
+  </div>
+  <hr>
+  <button class="btn btn-blue" onclick="validarEContinuar()">→ Continuar para resumo</button>
+  <button class="btn btn-red btn-sm" onclick="limparTudo()">🗑️ Limpar todos os dados</button>
+</div>
+
+<!-- TAB 2 -->
+<div class="pane" id="p1">
+  <div class="preview">
+    <div class="preview-title">Resumo do cliente</div>
+    <div id="prevBody"><span style="color:var(--t3);font-size:13px">Sem dados ainda.</span></div>
+  </div>
+  <button class="btn btn-blue" onclick="goTab(2)">→ Continuar para envio</button>
+  <button class="btn btn-out btn-sm" onclick="goTab(0)">← Editar dados</button>
+</div>
+
+<!-- TAB 3 -->
+<div class="pane" id="p2">
+  <div class="fl">
+    <label>Enviar para (email de destino) <span class="req">*</span></label>
+    <div class="ic">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <input id="cfg_to" type="email" placeholder="vendas@empresa.com"
+        autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
+        oninput="guardarEmailDestino()" onblur="guardarEmailDestino()">
+    </div>
+    <div class="saved-hint">✓ Guardado automaticamente — podes alterar quando quiseres</div>
+  </div>
+  <div class="preview">
+    <div class="preview-title">Resumo do registo</div>
+    <div id="prevBody2"><span style="color:var(--t3);font-size:13px">Sem dados ainda.</span></div>
+  </div>
+  <button class="btn btn-green" onclick="enviar()">📤 Enviar email agora</button>
+  <button class="btn btn-out btn-sm" onclick="goTab(0)">← Editar dados</button>
+  <hr>
+  <button class="btn btn-out btn-sm" onclick="novoRegisto()">🔄 Novo registo</button>
+</div>
+</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+var CAMPOS=['f_nom','f_ape','f_tel','f_email','f_emp','f_ciu','f_prod','f_notas','dictado'];
+function limparCampos(){CAMPOS.forEach(function(id){var el=document.getElementById(id);if(el){el.value='';el.removeAttribute('value');}});}
+limparCampos();setTimeout(limparCampos,80);setTimeout(limparCampos,400);
+document.addEventListener('DOMContentLoaded',limparCampos);
+window.addEventListener('pageshow',limparCampos);
+
+function guardarEmailDestino(){try{var v=document.getElementById('cfg_to').value.trim();if(v)localStorage.setItem('emailDest',v);}catch(e){}}
+function carregarEmailDestino(){try{var v=localStorage.getItem('emailDest');if(v)document.getElementById('cfg_to').value=v;}catch(e){}}
+setTimeout(carregarEmailDestino,500);
+
+function toast(msg,tipo,dur){var el=document.getElementById('toastEl');el.textContent=msg;el.className='toast on '+(tipo||'info');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('on')},dur||2800);}
+function goTab(n){document.querySelectorAll('.pane').forEach(function(p,i){p.classList.toggle('on',i===n)});document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===n)});window.scrollTo(0,0);if(n===1||n===2)buildPreview();}
+function limparErr(fid,eid){document.getElementById(fid).classList.remove('err');document.getElementById(eid).classList.remove('on');}
+function mostrarErr(fid,eid){document.getElementById(fid).classList.add('err');document.getElementById(eid).classList.add('on');document.getElementById(fid).focus();}
+
+/* ── EXTRACÇÃO IA via Netlify Function (sem CORS) ── */
+function extrairComIA(){
+  var txt=document.getElementById('dictado').value.trim();
+  if(!txt){toast('Dita ou escreve os dados primeiro','err');return;}
+  var btn=document.getElementById('btnEx');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin">⟳</span> A processar...';
+  toast('IA a extrair dados...','info',10000);
+  fetch('/ai',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-haiku-4-5-20251001',
+      max_tokens:600,
+      messages:[{role:'user',content:'Extrai os dados do cliente deste texto em português. Converte TODOS os números por extenso para algarismos (ex: nove dois três→923). Responde APENAS JSON sem backticks. Campos: nome,apelido,telefone,email,empresa,cidade,produto,notas. Usa "" se não encontrar.\n\nTexto: '+txt}]
+    })
+  })
+  .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+  .then(function(d){
+    var raw=((d.content||[])[0]||{}).text||'{}';
+    raw=raw.replace(/```json|```/g,'').trim();
+    var p={};try{p=JSON.parse(raw);}catch(e){}
+    var mapa={nome:'f_nom',apelido:'f_ape',telefone:'f_tel',email:'f_email',empresa:'f_emp',cidade:'f_ciu',produto:'f_prod',notas:'f_notas'};
+    var n=0;
+    Object.keys(mapa).forEach(function(k){
+      var val=p[k]?String(p[k]).trim():'';
+      if(val){
+        var el=document.getElementById(mapa[k]);
+        if(k==='telefone')val=val.replace(/[^0-9]/g,'');
+        el.value=val;el.classList.add('ai');n++;
+      }
+    });
+    btn.disabled=false;btn.innerHTML='✨ Extrair dados com IA';
+    if(n>0){toast(n+' campos preenchidos ✓','ok');}
+    else{toast('Sem dados detectados — preenche manualmente','err');}
+  })
+  .catch(function(err){
+    btn.disabled=false;btn.innerHTML='✨ Extrair dados com IA';
+    toast('Erro: '+err.message,'err',5000);
+  });
+}
+
+function gv(id){return(document.getElementById(id)||{}).value||'';}
+function validarEContinuar(){
+  var ok=true;
+  if(!gv('f_nom').trim()){mostrarErr('f_nom','e_nom');ok=false;}else limparErr('f_nom','e_nom');
+  if(!gv('f_ape').trim()){mostrarErr('f_ape','e_ape');ok=false;}else limparErr('f_ape','e_ape');
+  var tel=gv('f_tel').trim();
+  if(!tel||tel.replace(/[^0-9]/g,'').length<6){mostrarErr('f_tel','e_tel');ok=false;}else limparErr('f_tel','e_tel');
+  var em=gv('f_email').trim();
+  if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){mostrarErr('f_email','e_email');ok=false;}else limparErr('f_email','e_email');
+  if(!ok){toast('Corrige os campos a vermelho','err');return;}
+  buildPreview();goTab(1);
+}
+function buildPreview(){
+  var nom=[gv('f_nom'),gv('f_ape')].filter(Boolean).join(' ');
+  var rows=[['Nome',nom],['Telefone',gv('f_tel')],['Email',gv('f_email')],['Empresa',gv('f_emp')],['Cidade',gv('f_ciu')],['Procura',gv('f_prod')],['Notas',gv('f_notas')]].filter(function(r){return r[1].trim();});
+  var html=rows.length?rows.map(function(r){return'<div class="pr"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>';}).join(''):'<span style="color:var(--t3);font-size:13px">Sem dados.</span>';
+  document.getElementById('prevBody').innerHTML=html;
+  document.getElementById('prevBody2').innerHTML=html;
+}
+function enviar(){
+  var to=gv('cfg_to').trim();
+  if(!to){toast('Indica o email de destino','err');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){toast('Email inválido','err');return;}
+  var nom=[gv('f_nom'),gv('f_ape')].filter(Boolean).join(' ').trim();
+  var lines=['=== NOVO REGISTO DE CLIENTE ===',''];
+  if(nom)lines.push('Nome: '+nom);
+  [{id:'f_tel',l:'Telefone'},{id:'f_email',l:'Email'},{id:'f_emp',l:'Empresa'},{id:'f_ciu',l:'Cidade'},{id:'f_prod',l:'Procura'},{id:'f_notas',l:'Notas'}].forEach(function(x){if(gv(x.id).trim())lines.push(x.l+': '+gv(x.id).trim());});
+  lines.push('','Registado em: '+new Date().toLocaleString('pt-PT'));
+  var s='Novo cliente: '+(nom||'Sem nome')+' — '+new Date().toLocaleDateString('pt-PT');
+  window.location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(lines.join('\n'));
+  toast('A abrir email...','ok');
+}
+function limparTudo(){
+  if(!confirm('Limpar todos os dados?'))return;
+  CAMPOS.forEach(function(id){var el=document.getElementById(id);if(el){el.value='';el.classList.remove('ai','err');}});
+  ['e_nom','e_ape','e_tel','e_email'].forEach(function(id){document.getElementById(id).classList.remove('on');});
+  toast('Formulário limpo ✓','ok');
+}
+function novoRegisto(){limparTudo();document.getElementById('cfg_to').value='';try{localStorage.removeItem('emailDest');}catch(e){}goTab(0);toast('Novo registo iniciado','info');}
+</script>
+</body>
+</html>
