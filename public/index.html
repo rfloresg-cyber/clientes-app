@@ -185,11 +185,11 @@ hr{border:none;border-top:1px solid var(--b1);margin:16px 0}
     <label>Enviar para (email de destino) <span class="req">*</span></label>
     <div class="ic">
       <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      <input id="cfg_to" type="email" placeholder="vendas@empresa.com"
+      <input id="cfg_to" type="email" value="angoticsigse@gmail.com" readonly
         autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
-        oninput="guardarEmailDestino()" onblur="guardarEmailDestino()">
+        style="opacity:.7;cursor:not-allowed">
     </div>
-    <div class="saved-hint">✓ Guardado automaticamente — podes alterar quando quiseres</div>
+    <div class="saved-hint">✓ Email de destino fixo</div>
   </div>
   <div class="preview">
     <div class="preview-title">Resumo do registo</div>
@@ -209,10 +209,6 @@ function limparCampos(){CAMPOS.forEach(function(id){var el=document.getElementBy
 limparCampos();setTimeout(limparCampos,80);setTimeout(limparCampos,400);
 document.addEventListener('DOMContentLoaded',limparCampos);
 window.addEventListener('pageshow',limparCampos);
-
-function guardarEmailDestino(){try{var v=document.getElementById('cfg_to').value.trim();if(v)localStorage.setItem('emailDest',v);}catch(e){}}
-function carregarEmailDestino(){try{var v=localStorage.getItem('emailDest');if(v)document.getElementById('cfg_to').value=v;}catch(e){}}
-setTimeout(carregarEmailDestino,500);
 
 function toast(msg,tipo,dur){var el=document.getElementById('toastEl');el.textContent=msg;el.className='toast on '+(tipo||'info');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('on')},dur||2800);}
 function goTab(n){document.querySelectorAll('.pane').forEach(function(p,i){p.classList.toggle('on',i===n)});document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===n)});window.scrollTo(0,0);if(n===1||n===2)buildPreview();}
@@ -299,7 +295,7 @@ function limparTudo(){
   ['e_nom','e_ape','e_tel','e_email'].forEach(function(id){document.getElementById(id).classList.remove('on');});
   toast('Formulário limpo ✓','ok');
 }
-function novoRegisto(){limparTudo();document.getElementById('cfg_to').value='';try{localStorage.removeItem('emailDest');}catch(e){}goTab(0);toast('Novo registo iniciado','info');}
+function novoRegisto(){limparTudo();goTab(0);toast('Novo registo iniciado','info');}
 </script>
 </body>
 </html>
