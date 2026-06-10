@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const APIKEY = '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';
+const APIKEY = process.env.ANTHROPIC_API_KEY;
 
 app.post('/ai', async (req, res) => {
   try {
