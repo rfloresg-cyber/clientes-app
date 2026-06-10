@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const APIKEY = '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';
+const APIKEY = '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';
 
 app.post('/ai', async (req, res) => {
   try {
