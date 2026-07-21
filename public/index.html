@@ -82,8 +82,7 @@ hr{border:none;border-top:1px solid var(--b1);margin:16px 0}
 </div>
 <div class="tabs">
   <button class="tab on" onclick="goTab(0)">1 · Dados</button>
-  <button class="tab" onclick="goTab(1)">2 · Resumo</button>
-  <button class="tab" onclick="goTab(2)">3 · Enviar</button>
+  <button class="tab" onclick="goTab(1)">2 · Resumo e Envio</button>
 </div>
 
 <!-- TAB 1 -->
@@ -170,31 +169,21 @@ hr{border:none;border-top:1px solid var(--b1);margin:16px 0}
   <button class="btn btn-red btn-sm" onclick="limparTudo()">🗑️ Limpar todos os dados</button>
 </div>
 
-<!-- TAB 2 -->
+<!-- TAB 2 (Resumo + Envio unificados) -->
 <div class="pane" id="p1">
-  <div class="preview">
-    <div class="preview-title">Resumo do cliente</div>
-    <div id="prevBody"><span style="color:var(--t3);font-size:13px">Sem dados ainda.</span></div>
-  </div>
-  <button class="btn btn-blue" onclick="goTab(2)">→ Continuar para envio</button>
-  <button class="btn btn-out btn-sm" onclick="goTab(0)">← Editar dados</button>
-</div>
-
-<!-- TAB 3 -->
-<div class="pane" id="p2">
   <div class="fl">
     <label>Enviar para (email de destino) <span class="req">*</span></label>
     <div class="ic">
       <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      <input id="cfg_to" type="email" value="angoticsigse@gmail.com" readonly
+      <input id="cfg_to" type="email" value="palop@sigse.com" readonly
         autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
         style="opacity:.7;cursor:not-allowed">
     </div>
     <div class="saved-hint">✓ Email de destino fixo</div>
   </div>
   <div class="preview">
-    <div class="preview-title">Resumo do registo</div>
-    <div id="prevBody2"><span style="color:var(--t3);font-size:13px">Sem dados ainda.</span></div>
+    <div class="preview-title">Resumo do cliente</div>
+    <div id="prevBody"><span style="color:var(--t3);font-size:13px">Sem dados ainda.</span></div>
   </div>
   <button class="btn btn-green" onclick="enviar()">📤 Enviar email agora</button>
   <button class="btn btn-out btn-sm" onclick="goTab(0)">← Editar dados</button>
@@ -212,7 +201,7 @@ document.addEventListener('DOMContentLoaded',limparCampos);
 window.addEventListener('pageshow',limparCampos);
 
 function toast(msg,tipo,dur){var el=document.getElementById('toastEl');el.textContent=msg;el.className='toast on '+(tipo||'info');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('on')},dur||2800);}
-function goTab(n){document.querySelectorAll('.pane').forEach(function(p,i){p.classList.toggle('on',i===n)});document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===n)});window.scrollTo(0,0);if(n===1||n===2)buildPreview();}
+function goTab(n){document.querySelectorAll('.pane').forEach(function(p,i){p.classList.toggle('on',i===n)});document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===n)});window.scrollTo(0,0);if(n===1)buildPreview();}
 function limparErr(fid,eid){document.getElementById(fid).classList.remove('err');document.getElementById(eid).classList.remove('on');}
 function mostrarErr(fid,eid){document.getElementById(fid).classList.add('err');document.getElementById(eid).classList.add('on');document.getElementById(fid).focus();}
 
@@ -275,7 +264,6 @@ function buildPreview(){
   var rows=[['Nome',nom],['Telefone',gv('f_tel')],['Email',gv('f_email')],['Empresa',gv('f_emp')],['Cidade',gv('f_ciu')],['Procura',gv('f_prod')],['Notas',gv('f_notas')]].filter(function(r){return r[1].trim();});
   var html=rows.length?rows.map(function(r){return'<div class="pr"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>';}).join(''):'<span style="color:var(--t3);font-size:13px">Sem dados.</span>';
   document.getElementById('prevBody').innerHTML=html;
-  document.getElementById('prevBody2').innerHTML=html;
 }
 function enviar(){
   var to=gv('cfg_to').trim();
